@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Quote, Play } from 'lucide-react'
 
 // 16 items total: 12 text + 4 video
@@ -30,7 +30,7 @@ const accents = [
 
 function TextTile({ item, accent }) {
   return (
-    <article className={`group relative overflow-hidden rounded-2xl border ${accent.border} ${accent.bg} p-5 transition duration-300 hover:-translate-y-0.5 focus-within:-translate-y-0.5`}>
+    <article className={`group relative overflow-hidden rounded-2xl border ${accent.border} ${accent.bg} p-5 shadow-sm transition duration-300 hover:-translate-y-0.5 focus-within:-translate-y-0.5`}>
       <div className={`pointer-events-none absolute -inset-24 rounded-[3rem] bg-gradient-to-br ${accent.glow} opacity-0 blur-2xl transition duration-500 group-hover:opacity-60`} />
       <Quote aria-hidden className={`h-5 w-5 ${accent.icon}`} />
       <p className="mt-3 text-sm leading-relaxed">{item.text}</p>
@@ -42,18 +42,21 @@ function TextTile({ item, accent }) {
 function VideoTile({ item }) {
   return (
     <figure className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-sm">
+      <div className="relative w-full">
+        <div className="aspect-[4/3] w-full overflow-hidden">
+          <video
+            className="h-full w-full object-cover"
+            src={item.src}
+            poster={item.poster}
+            playsInline
+            muted
+            loop
+            autoPlay
+            preload="metadata"
+          />
+        </div>
+      </div>
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/0 to-slate-900/10" />
-      <video
-        className="h-full w-full object-cover"
-        src={item.src}
-        poster={item.poster}
-        playsInline
-        muted
-        loop
-        autoPlay
-        preload="metadata"
-      />
-      {/* Overlay content */}
       <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center gap-2 p-3 text-xs text-white drop-shadow">
         <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-900/70 backdrop-blur">
           <Play size={14} />
@@ -66,26 +69,8 @@ function VideoTile({ item }) {
 }
 
 export default function Testimonials() {
-  // Masonry-like bento grid using fixed spans for rhythm
-  // On large screens: 4 columns. We map each index to a span recipe.
-  const spanMap = [
-    'lg:col-span-2', // 0 wide text
-    '', // 1 normal
-    'lg:row-span-2', // 2 tall video
-    '', // 3 normal
-    '', // 4 normal
-    'lg:col-span-2', // 5 wide video
-    '', // 6 normal
-    '', // 7 normal
-    'lg:col-span-2', // 8 wide text
-    '', // 9 video normal
-    '', // 10 normal
-    '', // 11 normal
-    'lg:row-span-2', // 12 tall text
-    '', // 13 video normal
-    '', // 14 normal
-    '', // 15 normal
-  ]
+  const [expanded, setExpanded] = useState(false)
+  const visibleItems = expanded ? items : items.slice(0, 8)
 
   return (
     <section className="relative py-20">
@@ -99,12 +84,12 @@ export default function Testimonials() {
           <p className="mt-2 text-slate-600">16 real snapshots — 12 text notes and 4 short video clips</p>
         </div>
 
-        <div className="grid auto-rows-[1fr] grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {items.map((item, idx) => {
+        {/* Masonry using CSS columns to minimize gaps */}
+        <div className="[column-fill:_balance] columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4">
+          {visibleItems.map((item, idx) => {
             const accent = accents[idx % accents.length]
-            const span = spanMap[idx] || ''
             return (
-              <div key={idx} className={`${span} min-h-[180px]`}> 
+              <div key={idx} className="mb-4 break-inside-avoid will-change-transform">
                 {item.type === 'video' ? (
                   <VideoTile item={item} />
                 ) : (
@@ -113,6 +98,17 @@ export default function Testimonials() {
               </div>
             )
           })}
+
+          {!expanded && (
+            <button
+              onClick={() => setExpanded(true)}
+              className="mb-4 w-full break-inside-avoid group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 text-left text-slate-900 shadow-sm transition hover:-translate-y-0.5"
+            >
+              <div className="pointer-events-none absolute -inset-24 rounded-[3rem] bg-gradient-to-br from-slate-200 to-white opacity-0 blur-2xl transition duration-500 group-hover:opacity-60" />
+              <div className="text-sm font-medium">Show more…</div>
+              <div className="mt-2 text-xs text-slate-600">Reveal all 16 stories</div>
+            </button>
+          )}
         </div>
       </div>
     </section>
