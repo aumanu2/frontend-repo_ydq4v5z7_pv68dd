@@ -1,26 +1,23 @@
-import { useState } from 'react'
+import React from 'react'
+import Hero from './components/Hero'
+import Stats from './components/Stats'
+import Agenda from './components/Agenda'
+import Mentors from './components/Mentors'
+import Offerings from './components/Offerings'
+import Testimonials from './components/Testimonials'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Vibe Coding Platform
-        </h1>
-        <p className="text-gray-600 mb-6">
-          Your AI-powered development environment
-        </p>
-        <div className="text-center">
-          <button
-            onClick={() => setCount(count + 1)}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-          >
-            Count is {count}
-          </button>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#0b0d12] text-white">
+      <Hero />
+      <Stats />
+      <Agenda />
+      <Mentors />
+      <Offerings />
+      <Testimonials />
+      <footer className="border-t border-white/10 bg-[#0b0d12] py-10 text-center text-xs text-gray-500">
+        © {new Date().getFullYear()} Elite Mentor Collective · Guidance for JEE & Class 11–12
+      </footer>
     </div>
   )
 }
